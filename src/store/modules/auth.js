@@ -13,15 +13,19 @@ export default {
     mutations: {
         setAccessToken(state, payload) {
             state.accessToken = payload
+            localStorage.setItem('accessToken', payload); 
         },
         removeAccessToken(state) {
             state.accessToken = ''
+            localStorage.removeItem('accessToken');
         },
         setUserEmail(state, payload) {
             state.email = payload
+            localStorage.setItem('userEmail', payload);
         },
         removeUserEmail(state) {
             state.email = ''
+            localStorage.removeItem('userEmail');
         }
     },
     actions: {
@@ -48,9 +52,26 @@ export default {
                 console.error('Failed login: ', error)
             }
         },
-        logoutUser({ commit }) {
-          commit('removeAccessToken')
-          commit('removeUserEmail')
+        initializeAuth({ commit }) {
+          const token = localStorage.getItem('accessToken');
+          const email = localStorage.getItem('userEmail');
+          if (token) commit('setAccessToken', token);
+          if (email) commit('setUserEmail', email);
+        },
+        async logoutUser({ commit }) {
+          try {
+           const response = await fetchData.post('/user/logout')
+              if (response.data.ApiStatus) {
+                commit('removeAccessToken')
+                commit('removeUserEmail')
+                window.location.href = '/';
+                return true
+              } else {
+                throw new Error('Invalid access token')
+              }
+          } catch (error) {
+              console.error('Failed logout: ', error)
+          }
         }
     },
 }

@@ -1,9 +1,12 @@
 <template>
-  <div>
-    <h1>Welcome to Ecommerce Guru Dashboard</h1>
-    <h2>Enter your login details for reaching your sales details</h2>
+  <section
+    class="flex flex-col items-center justify-center h-full bg-red-100 gap-20">
+    <div class="text-center mt-20">
+      <h1 class="font-bold">Welcome to Ecommerce Guru Dashboard</h1>
+      <h2>Enter your login details for reaching your sales details</h2>
+    </div>
 
-    <div class="flex justify-center items-center h-screen">
+    <div class="flex justify-center items-center">
       <div class="w-96 p-6 bg-white shadow-lg rounded-lg">
         <h1 class="text-xl font-bold mb-4">Login</h1>
         <form @submit.prevent="submitLoginDetails">
@@ -30,7 +33,7 @@
       </div>
     </div>
 
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -59,19 +62,9 @@ const submitLoginDetails = async () => {
       email: loginDetails.email, password: loginDetails.password
     });
 
-    console.log(isUserLogged)
-
     if (isUserLogged) {
-      console.log("User is logged in");
-      console.log("Store in Login.vue:", store)
-      console.log("Attempting to navigate to /dashboard");
-      router.push('/dashboard').then(() => {
-        console.log("Navigation to /dashboard successful");
-      }).catch((error) => {
-        console.error("Failed to navigate to /dashboard:", error);
-      });
-    }
-    else {
+      router.push('/dashboard')
+    } else {
       errorMessage.value = "Hmm, invalid email or password. Please try again.";
     }
     resetPassword();

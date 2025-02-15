@@ -1,41 +1,56 @@
-import fetchData from "@/utils/fetchData";
+import fetchData from '@/utils/fetchData'
 
 export default {
-  namespaced: true,
-  state: {
-    marketplaceName: "",
-    storeId: ""
-  },
-  getters:{},
-  mutations: {
-    setUserInfo(state, userInfo) {
-      state.marketplaceName = userInfo.marketplaceName;
-      state.storeId = userInfo.storeId;
-    }
-  },
-  actions: {
-    async fetchUserInfo({commit, rootState}) {
-      try {
+    namespaced: true,
+    state: {
+        firstName: '',
+        lastName: '',
+        userId: '',
+        store: {
+            marketplaceName: '',
+            storeId: '',
+        },
+        fetchError: null,
+        loading: false,
+    },
+    getters: {},
+    mutations: {
+        setUserInfo(state, userInfo) {
+            state.firstName = userInfo.firstName
+            state.lastName = userInfo.lastName
+            state.userId = userInfo.userId
+            state.store.marketplaceName = userInfo.store[0].marketplaceName
+            state.store.storeId = userInfo.store[0].storeId
+        },
+        setError(state, error) {
+            state.fetchError = error
+        },
+        setLoading(state, loadingStatus) {
+            state.loading = loadingStatus
+        },
+    },
+    actions: {
+        async fetchUserInfo({ commit, rootState }) {
+            try {
+                const userEmail = rootState.auth.email
 
-        const userEmail = rootState.auth.email;
-        const accessToken = rootState.auth.accessToken;
+                if (!userEmail) {
+                    throw new Error('User email not found')
+                }
+                const response = await fetchData.post('/user/user-information', {
+                    email: userEmail,
+                })
 
-        console.log("User Email:", userEmail);
-        console.log("Access Token:", accessToken);
-        const response = await fetchData.get("/user/user-information", {
-          email: {
-            email: userEmail
-          },
-          headers: {
-            Authorization: `Bearer ${rootState.auth.accessToken}`
-          }
-        });
-        console.log("User Information Response:", response.data);
-
-        commit("setUserInfo", response.data);
-      } catch(error) {
-        console.error(error);
-      }
-    }
-  }
+                if (response.data.ApiStatus) {
+                    commit('setUserInfo', response.data.Data.user)
+                    return true
+                } else {
+                    throw new Error(response.data.Message || 'Failed to fetch user information')
+                }
+            } catch (error) {
+                console.error('Error fetching user information:', error.message)
+                throw error
+            }
+        },
+    },
 }

@@ -1,11 +1,22 @@
 <template>
   <div class="p-4">
-    <h1 class="text-xl font-bold mb-4">Dashboard</h1>
-    <p v-if="marketplaceName">Welcome! Your marketplace is {{ marketplaceName }}.</p>
-    <p v-else>Loading marketplace information...</p>
-    <p v-if="storeId">Your store ID is {{ storeId }}.</p>
+    <div v-if="fetchError && storeId"
+      class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ fetchError }}
+    </div>
+
+    <div v-if="loading" class="flex items-center justify-center p-8">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500">
+      </div>
+    </div>
+
+    <div v-else>
+      <h1 class="text-xl font-bold mb-4">Daily Sales</h1>
+      <Chart v-if="!loading && !fetchError" />
+    </div>
   </div>
-  <Chart />
+
+
 </template>
 
 <script setup>
@@ -13,16 +24,28 @@ import { onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import Chart from '@/components/Chart.vue';
 
-
-// Vuex store
+// Initialize the store
 const store = useStore();
 
-// Fetch user information when the dashboard is mounted
-onMounted(async () => {
-  await store.dispatch("user/fetchUserInfo");
-});
+const marketplaceName = computed(() => store.state.user.store.marketplaceName);
+const storeId = computed(() => store.state.user.store.storeId);
 
-// Map user information from the Vuex store
-const marketplaceName = computed(() => store.state.user.marketplaceName);
-const storeId = computed(() => store.state.user.storeId);
+const loading = computed(() => store.state.user.loading);
+const fetchError = computed(() => store.state.user.fetchError);
+
+onMounted(async () => {
+  try {
+    store.commit('user/setLoading', true);
+    store.commit('user/setError', null);
+
+    await store.dispatch("user/fetchUserInfo");
+  } catch (err) {
+    store.commit('user/setError',
+      'Unable to load user information. Please try again later.'
+    );
+    console.error("Dashboard loading error:", err);
+  } finally {
+    store.commit('user/setLoading', false);
+  }
+});
 </script>
