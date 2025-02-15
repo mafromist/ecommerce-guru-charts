@@ -1,12 +1,16 @@
 // store/index.js
 import { createStore } from 'vuex'
-import stack from './modules/stack'
-import charts from './modules/charts'
+
+import charts from '@/store/modules/charts'
+import auth from '@/store/modules/auth'
+import user from '@/store/modules/user'
+
 
 const store = createStore({
     modules: {
-        stack,
-        charts
+        auth,
+        user,
+        charts,
     },
 })
 

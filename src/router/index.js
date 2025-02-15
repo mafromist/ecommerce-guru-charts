@@ -1,22 +1,34 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '/src/components/Home.vue'
-import About from '/src/components/About.vue'
+import Dashboard from '@views/Dashboard.vue'
+import Login from '@views/Login.vue'
+import store from '@/store'
 
 const routes = [
     {
         path: '/',
-        name: 'Home',
-        component: Home,
+        name: 'Welcome to Ecommerce Guru ',
+        component: Login,
     },
     {
-        path: '/about',
-        name: 'About',
-        component: About,
+        path: '/dashboard',
+        name: 'Dashboard',
+        component: Dashboard,
+        meta: {
+            requiresAuth: true,
+        },
     },
 ]
 const router = createRouter({
     history: createWebHistory(),
     routes,
+})
+
+router.beforeEach((to, from, next) => {
+    if (to.meta.requiresAuth && !store.getters['auth/isAuthenticated']) {
+        next('/')
+    } else {
+        next()
+    }
 })
 
 export default router

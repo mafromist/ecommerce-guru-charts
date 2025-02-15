@@ -11,7 +11,7 @@
         "highcharts": "^12.1.2",
         "highcharts-vue": "^2.0.1",
         "vite": "^2.9.6",
-        "vue": "^3.2.16",
+        "vue": "^3.5",
         "vue-router": "^4.0.11",
         "vuex": "^4.0.2"
     },

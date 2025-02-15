@@ -10,4 +10,11 @@ export default defineConfig({
             svgo: false,
         }),
     ],
+    resolve: {
+        alias: {
+          '@': '/src',
+          '@components': '/src/components',
+          '@views': '/src/views',
+        },
+      },
 })
