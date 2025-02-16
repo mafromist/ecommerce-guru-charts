@@ -12,9 +12,7 @@ fetchData.interceptors.request.use(
         const token = localStorage.getItem('accessToken')
         if (token) {
             config.headers.Authorization = `Bearer ${token}`
-        } else {
-            console.warn('[FetchData] No token found in localStorage')
-        }
+        } 
         return config
     }, (error) => {
         if (error.response) {

@@ -1,6 +1,6 @@
 <template>
   <div class="p-4">
-    <div v-if="fetchError && storeId"
+    <div v-if="fetchError"
       class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
       {{ fetchError }}
     </div>
@@ -11,21 +11,21 @@
     </div>
 
     <div v-else>
-      <ChartContainer v-if="!loading && !fetchError" />
+      <ChartContainer v-if="!loading && !fetchError"/>
+      <Table v-if="!loading && !fetchError"/>
     </div>
   </div>
-
-
 </template>
 
 <script setup>
 import { onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import ChartContainer from "@/components/ChartContainer.vue";
+import Table from "@/components/Table.vue";
 
 const store = useStore();
 
-const loading = computed(() => store.state.user.loadingUser);
+const loading = computed(() => store.state.user.loading);
 const fetchError = computed(() => store.state.user.fetchError);
 
 onMounted(async () => {

@@ -1,7 +1,7 @@
 <template>
 
-  <footer class="bg-purple-200 text-purple-500 text-center p-2">
-    <p class="text-center font-bold">© 2025 - Developed by Muge Alev</p>
+  <footer class="bg-purple-200 text-gray text-center p-2">
+    <p class="text-center font-thin">© 2025 - Developed for Eva by Muge</p>
   </footer>
 
 </template>

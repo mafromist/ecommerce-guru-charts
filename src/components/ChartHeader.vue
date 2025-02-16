@@ -1,9 +1,9 @@
 <template>
-  <div class="chart-header flex justify-between items-center ">
-    <h1 class="text-xl font-bold mb-4">Daily Sales</h1>
+  <div class="chart-header flex justify-between items-center mb-6">
+    <h1 class="text-xl font-bold ml-4">Daily Sales</h1>
 
     <select v-model.number="selectedDayRange" @change="updateDayRange"
-      class="border-none rounded px-2 py-2">
+      class="border-none rounded px-4">
       <option v-for="day in dayRanges" :value="day" :key="day">
         Last {{ day }} days
       </option>

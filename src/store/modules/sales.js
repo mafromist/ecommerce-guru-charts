@@ -4,7 +4,7 @@ export default {
     namespaced: true,
     state: {
         salesData: {},
-        selectedDayRange: 60,
+        selectedDayRange: 14,
         loading: false,
         fetchError: null,
         currency: '',

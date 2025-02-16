@@ -1,13 +1,15 @@
 <template>
   <div class="chart-container bg-white shadow-sm p-2 rounded-lg">
-    <ChartHeader :dayRange="selectedDayRange"
+    <ChartHeader 
+      :dayRange="selectedDayRange"
       @dayRangeChanged="changeDayRange" />
     <ChartBody v-if="!loading && salesData.length > 0" 
       :key="salesData.length"
       :salesData="salesData" 
       :loading="loading" 
       :fetchError="fetchError"
-      :currency="storeCurrency" />
+      :currency="storeCurrency"
+      @updateSelectedDate="update-selected-date" />
   </div>
 </template>
 
@@ -17,6 +19,8 @@ import ChartHeader from './ChartHeader.vue';
 
 import { computed, watch } from "vue";
 import { useStore } from "vuex";
+
+const emit = defineEmits(['update-selected-date']);
 
 const store = useStore();
 

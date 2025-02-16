@@ -16,7 +16,10 @@
 
 <script setup>
 import Highcharts from 'highcharts';
-import { computed, onMounted, watch } from 'vue';
+import { computed, onMounted } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
 
 const props = defineProps({
   salesData: {
@@ -64,6 +67,7 @@ const chartOptions = computed(() => {
       shared: true,
       useHTML: true,
     },
+
     plotOptions: {
       column: {
         stacking: 'normal',
@@ -74,7 +78,14 @@ const chartOptions = computed(() => {
           x: 0
         },
         pointPadding: 0.1,
-        groupPadding: 0
+        point: {
+          events: {
+            click: function () {
+              const selectedDate = this.category; 
+              selectDates(selectedDate); 
+              }
+          }
+        }
       }
     },
     series: [
@@ -96,6 +107,17 @@ const chartOptions = computed(() => {
     }
   };
 });
+
+const selectDates = (date) => {
+  if (!store.state.skuList.selectedDate) {
+    store.commit('skuList/setSelectedDate', date);
+  } else if (!store.state.skuList.selectedDate2) {
+    store.commit('skuList/setSelectedDate2', date);
+  } else {
+    store.commit('skuList/setSelectedDate', date);
+    store.commit('skuList/setSelectedDate2', '');
+  }
+}
 
 onMounted(() => {
   Highcharts.chart('sales-chart-container', chartOptions.value);

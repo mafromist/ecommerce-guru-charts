@@ -11,7 +11,7 @@ export default {
             storeId: '',
         },
         fetchError: null,
-        loadingUser: false,
+        loading: false,
     },
     getters: {},
     mutations: {
@@ -29,7 +29,7 @@ export default {
             state.fetchError = null
         },
         setLoading(state, loadingStatus) {
-            state.loadingUser = loadingStatus
+            state.loading = loadingStatus
         },
     },
     actions: {
