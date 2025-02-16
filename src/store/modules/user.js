@@ -1,4 +1,4 @@
-import fetchData from '@/utils/fetchData'
+import fetchData from '@/api/fetchData'
 
 export default {
     namespaced: true,
@@ -11,7 +11,7 @@ export default {
             storeId: '',
         },
         fetchError: null,
-        loading: false,
+        loadingUser: false,
     },
     getters: {},
     mutations: {
@@ -25,8 +25,11 @@ export default {
         setError(state, error) {
             state.fetchError = error
         },
+        clearError(state) {
+            state.fetchError = null
+        },
         setLoading(state, loadingStatus) {
-            state.loading = loadingStatus
+            state.loadingUser = loadingStatus
         },
     },
     actions: {

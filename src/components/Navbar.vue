@@ -40,7 +40,6 @@ const isAuthenticated = computed(() => store.getters['auth/isAuthenticated']);
 const logout = () => {
   store.dispatch('auth/logoutUser');
   router.push('/');
-  console.log('hello')
 }
 
 const firstName = computed(() => store.state.user.firstName);

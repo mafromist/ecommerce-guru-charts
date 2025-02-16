@@ -12,6 +12,6 @@ import Footer from '@/components/Footer.vue';
 <style lang="scss">
 #app
 {
-    @apply h-screen flex flex-col justify-between bg-gray-50;
+    @apply h-screen flex flex-col justify-between bg-gray-200;
 }
 </style>

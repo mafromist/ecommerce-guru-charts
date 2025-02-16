@@ -3,7 +3,7 @@
     class="flex flex-col items-center justify-center h-full bg-red-100 gap-20">
     <div class="text-center mt-20">
       <h1 class="font-bold">Welcome to Ecommerce Guru Dashboard</h1>
-      <h2>Enter your login details for reaching your sales details</h2>
+      <h2>Enter your login details for reaching your daily sales details in your marketplace</h2>
     </div>
 
     <div class="flex justify-center items-center">

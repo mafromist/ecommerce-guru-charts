@@ -6,13 +6,12 @@
     </div>
 
     <div v-if="loading" class="flex items-center justify-center p-8">
-      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500">
       </div>
     </div>
 
     <div v-else>
-      <h1 class="text-xl font-bold mb-4">Daily Sales</h1>
-      <Chart v-if="!loading && !fetchError" />
+      <ChartContainer v-if="!loading && !fetchError" />
     </div>
   </div>
 
@@ -22,22 +21,18 @@
 <script setup>
 import { onMounted, computed } from "vue";
 import { useStore } from "vuex";
-import Chart from '@/components/Chart.vue';
+import ChartContainer from "@/components/ChartContainer.vue";
 
-// Initialize the store
 const store = useStore();
 
-const marketplaceName = computed(() => store.state.user.store.marketplaceName);
-const storeId = computed(() => store.state.user.store.storeId);
-
-const loading = computed(() => store.state.user.loading);
+const loading = computed(() => store.state.user.loadingUser);
 const fetchError = computed(() => store.state.user.fetchError);
 
 onMounted(async () => {
   try {
     store.commit('user/setLoading', true);
     store.commit('user/setError', null);
-
+   
     await store.dispatch("user/fetchUserInfo");
   } catch (err) {
     store.commit('user/setError',

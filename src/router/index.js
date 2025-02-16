@@ -1,17 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import store from '../store'
+import store from '@/store'
 
 const routes = [
   {
     path: '/',
-    name: 'Login',
-    component: () => import('@/views/Login.vue'),
+    name: 'LoginView',
+    component: () => import('@/views/LoginView.vue'),
     meta: { requiresAuth: false } 
   },
   {
     path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('@/views/Dashboard.vue'),
+    name: 'DashboardView',
+    component: () => import('@/views/DashboardView.vue'),
     meta: { requiresAuth: true }
   }
 ]
@@ -21,7 +21,7 @@ const router = createRouter({
   routes
 })
 
-// Before each route navigation, check if the user is authenticated
+// Before each route navigation, checking if the user is authenticated
 router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem('accessToken')
 
@@ -34,13 +34,13 @@ router.beforeEach(async (to, from, next) => {
       next() 
     } else {
       next({ 
-        name: 'Login',
+        name: 'LoginView',
         query: { redirect: to.fullPath }
       })
     }
   } else {
     if (store.getters['auth/isAuthenticated'] && to.name === 'Login') {
-      next({ name: 'Dashboard' })
+      next({ name: 'DashboardView' })
     } else {
       next()
     }

@@ -1,4 +1,4 @@
-import fetchData from '@/utils/fetchData'
+import fetchData from '@/api/fetchData'
 
 export default {
     namespaced: true,
@@ -8,20 +8,17 @@ export default {
     },
     getters: {
         isAuthenticated: (state) => state.accessToken !== '',
-
     },
     mutations: {
         setAccessToken(state, payload) {
             state.accessToken = payload
-            localStorage.setItem('accessToken', payload); 
         },
         removeAccessToken(state) {
             state.accessToken = ''
             localStorage.removeItem('accessToken');
         },
         setUserEmail(state, payload) {
-            state.email = payload
-            localStorage.setItem('userEmail', payload);
+            state.email = payload    
         },
         removeUserEmail(state) {
             state.email = ''
@@ -42,7 +39,10 @@ export default {
                 })
 
                 if (response.data.ApiStatus) {
-                    commit('setAccessToken', response.data.Data.AccessToken)
+                    const accessToken = response.data.Data.AccessToken
+                    localStorage.setItem('accessToken', accessToken); 
+                    localStorage.setItem('userEmail', email);
+                    commit('setAccessToken', accessToken)
                     commit('setUserEmail', email)
                     return true
                 } else {
@@ -52,12 +52,14 @@ export default {
                 console.error('Failed login: ', error)
             }
         },
+
         initializeAuth({ commit }) {
           const token = localStorage.getItem('accessToken');
           const email = localStorage.getItem('userEmail');
           if (token) commit('setAccessToken', token);
           if (email) commit('setUserEmail', email);
         },
+        
         async logoutUser({ commit }) {
           try {
            const response = await fetchData.post('/user/logout')
