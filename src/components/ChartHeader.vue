@@ -21,7 +21,6 @@ import { ref } from 'vue';
 const dayRanges = [60, 30, 14, 7];
 
 const selectedDayRange = ref(props.dayRange);
-
 const emit = defineEmits(['dayRangeChanged']);
 
 const updateDayRange = async () => {

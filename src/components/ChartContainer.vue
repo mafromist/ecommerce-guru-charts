@@ -33,6 +33,8 @@ const fetchError = computed(() => salesStore.value?.fetchDataError);
 const loading = computed(() => salesStore.value?.loading);
 const storeCurrency = computed(() => salesStore.value?.currency || '$');
 
+//This is to prevent undefined marketplaceName and storeId when userStore is not yet loaded
+
 watch(
   userStore,
   (newUserStore) => {

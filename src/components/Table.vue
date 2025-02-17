@@ -36,12 +36,14 @@
                       Product Name</th>
                     <th
                       class="p-3 text-start text-xs font-medium text-gray-500 capitalize text-right">
-                      <p class="font-bold underline">{{ updatedSelectedDate }}</p>
+                      <p class="font-bold underline">{{ updatedSelectedDate }}
+                      </p>
                       <p>Total Sales / Units / Avg Price</p>
                     </th>
                     <th v-if="skuList[0].isDatesCompared"
                       class="p-3 text-start text-xs font-medium text-gray-500 capitalize text-right">
-                      <p class="font-bold underline">{{ updatedSelectedDate2 }}</p>
+                      <p class="font-bold underline">{{ updatedSelectedDate2 }}
+                      </p>
                       <p>Sales / Units / Avg Price</p>
                     </th>
                     <th
@@ -53,8 +55,9 @@
                 </thead>
                 <tbody class="text-left px-2">
                   <template v-if="paginatedSkuList.length > 0">
-                    <tr v-for="(item, index) in paginatedSkuList" :key="item.sku"
-                      :class="['py-4', {'bg-gray-100': index % 2 === 1}]">
+                    <tr v-for="(item, index) in paginatedSkuList"
+                      :key="item.sku"
+                      :class="['py-4', { 'bg-gray-100': index % 2 === 1 }]">
                       <td class="p-2" v-html="highlightText(item.sku)"></td>
                       <td class="p-2" v-html="highlightText(item.productName)">
                       </td>
@@ -137,6 +140,8 @@ const storeCurrency = computed(() => store.getters['sales/getCurrency']);
 const currentPage = ref(1);
 const itemsPerPage = 10;
 
+
+// Search Functionality starts here
 const searchQuery = ref("");
 
 const filteredSkuList = computed(() => {
@@ -152,13 +157,23 @@ const filteredSkuList = computed(() => {
 }
 );
 
+const highlightText = (text) => {
+  if (!searchQuery.value) return text;
+  const escapedQuery = searchQuery.value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const regex = new RegExp(`(${escapedQuery})`, 'gi');
+  return text.replace(regex, '<span class="highlight">$1</span>');
+};
+
+watch(searchQuery, () => currentPage.value = 1);
+
+// Search Functionality ends here
+
+// Pagination Functionality starts here
+
 const paginatedSkuList = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage;
   return filteredSkuList.value.slice(start, start + itemsPerPage);
 });
-
-
-watch(searchQuery, () => currentPage.value = 1);
 
 const totalPages = computed(() => Math.ceil(filteredSkuList.value.length / itemsPerPage));
 
@@ -177,12 +192,8 @@ const prevPage = () => {
   if (currentPage.value > 1) goToPage(currentPage.value - 1);
 };
 
-const highlightText = (text) => {
-  if (!searchQuery.value) return text;
-  const escapedQuery = searchQuery.value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-  const regex = new RegExp(`(${escapedQuery})`, 'gi');
-  return text.replace(regex, '<span class="highlight">$1</span>');
-};
+// Pagination Functionality ends  here
+
 
 const updatedSelectedDayRange = computed(() => store.getters['sales/getSelectedDayRange']);
 const updatedSelectedDate = computed(() => store.getters['skuList/getSelectedDate']);
