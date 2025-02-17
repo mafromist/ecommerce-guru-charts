@@ -71,6 +71,7 @@ const chartOptions = computed(() => {
     plotOptions: {
       column: {
         stacking: 'normal',
+        cursor: 'pointer',
         dataLabels: {
           enabled: false,
           align: 'right',
@@ -81,9 +82,9 @@ const chartOptions = computed(() => {
         point: {
           events: {
             click: function () {
-              const selectedDate = this.category; 
-              selectDates(selectedDate); 
-              }
+              const selectedDate = this.category;
+              selectDates(selectedDate);
+            }
           }
         }
       }

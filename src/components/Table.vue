@@ -15,12 +15,12 @@
         <div class="-m-1.5 overflow-x-auto">
           <div class="pt-1.5 min-w-full inline-block align-middle">
             <div class="border rounded-lg divide-y divide-gray-200">
-              <div class="py-3 px-4 mb-2 rounded-lg">
-                <div class="relative max-w-xs">
+              <div class="py-3 pr-4  rounded-lg flex justify-end">
+                <div class="relative max-w-xs w-full">
                   <label class="sr-only">Search</label>
                   <input v-model="searchQuery" type="text"
                     id="hs-table-with-pagination-search"
-                    class="py-2 px-3 block w-full shadow-md bg-gray-100 border-purple-400 border-b-2 rounded-lg text-sm"
+                    class="py-2 px-3 block w-full bg-white border-gray-400 border-2 rounded-lg text-sm"
                     placeholder="Search for items">
                 </div>
               </div>
@@ -36,41 +36,41 @@
                       Product Name</th>
                     <th
                       class="p-3 text-start text-xs font-medium text-gray-500 capitalize text-right">
-                      <p>First Selected Date</p>
-                      <p>Sales / Units / Avg Price</p>
+                      <p class="font-bold underline">{{ updatedSelectedDate }}</p>
+                      <p>Total Sales / Units / Avg Price</p>
                     </th>
                     <th v-if="skuList[0].isDatesCompared"
                       class="p-3 text-start text-xs font-medium text-gray-500 capitalize text-right">
-                      <p>Second Selected Date</p>
+                      <p class="font-bold underline">{{ updatedSelectedDate2 }}</p>
                       <p>Sales / Units / Avg Price</p>
                     </th>
                     <th
                       class="p-3 text-end text-xs font-medium text-gray-500 capitalize">
                       <p>Refund Rate</p>
-                      <p>(Last {{ selectedDayRange }} Days)</p>
+                      <p>(Last {{ updatedSelectedDayRange }} Days)</p>
                     </th>
                   </tr>
                 </thead>
                 <tbody class="text-left px-2">
                   <template v-if="paginatedSkuList.length > 0">
-                    <tr v-for="item in paginatedSkuList" :key="item.sku"
-                      class="px-3">
-                      <td class="p-3" v-html="highlightText(item.sku)"></td>
-                      <td class="p-3" v-html="highlightText(item.productName)">
+                    <tr v-for="(item, index) in paginatedSkuList" :key="item.sku"
+                      :class="['py-4', {'bg-gray-100': index % 2 === 1}]">
+                      <td class="p-2" v-html="highlightText(item.sku)"></td>
+                      <td class="p-2" v-html="highlightText(item.productName)">
                       </td>
-                      <td class="p-3 text-right text-green-500 font-semibold">
+                      <td class="p-2 text-right text-green-500 font-semibold">
                         {{ storeCurrency + item.totalSalesOne }} / {{
                           item.totalSoldUnitsOne }} / {{ storeCurrency +
                           item.averageSalesOne }}
                       </td>
                       <td v-if="item.isDatesCompared"
-                        class="p-3 text-right text-red-500 font-semibold">
+                        class="p-2 text-right text-red-500 font-semibold">
                         {{ storeCurrency + item.totalSalesTwo }} / {{
                           item.totalSoldUnitsTwo }} / {{ storeCurrency +
                           item.averageSalesTwo }}
                       </td>
-                      <td class="p-3 text-center font-semibold">{{
-                        item.refundRate }}
+                      <td class="p-2 text-center font-semibold text-gray-600">
+                        <span>%</span>{{ item.refundRate }}
                       </td>
                     </tr>
                   </template>
@@ -131,11 +131,8 @@ const store = useStore();
 const loading = computed(() => store.state.skuList.loading);
 const fetchError = computed(() => store.state.skuList.fetchError);
 const skuList = computed(() => store.state.skuList.skuList);
-const storeCurrency = store.getters['sales/getCurrency'];
-const selectedDayRange = store.getters['sales/getSelectedDayRange'];
 
-// TODO: Selected Days are missing on the table
-// TODO: Selected Day Range should be dynamically changed depending on the user action on ChartHeader
+const storeCurrency = computed(() => store.getters['sales/getCurrency']);
 
 const currentPage = ref(1);
 const itemsPerPage = 10;
@@ -150,7 +147,6 @@ const filteredSkuList = computed(() => {
     );
   }
   else {
-    console.log(store.state.skuList)
     return skuList.value;
   }
 }
@@ -161,10 +157,10 @@ const paginatedSkuList = computed(() => {
   return filteredSkuList.value.slice(start, start + itemsPerPage);
 });
 
-const totalPages = computed(() => Math.ceil(filteredSkuList.value.length / itemsPerPage));
 
 watch(searchQuery, () => currentPage.value = 1);
 
+const totalPages = computed(() => Math.ceil(filteredSkuList.value.length / itemsPerPage));
 
 const goToPage = (page) => {
   currentPage.value = page;
@@ -188,21 +184,15 @@ const highlightText = (text) => {
   return text.replace(regex, '<span class="highlight">$1</span>');
 };
 
-watch(
-  () => [store.state.skuList.selectedDate, store.state.skuList.selectedDate2],
-  async ([selectedDate, selectedDate2]) => {
-    if (selectedDate) {
-      await store.dispatch('skuList/fetchSkuList', { selectedDate, selectedDate2, pageNumber: 1 });
-      await store.dispatch('skuList/fetchSkuRefundRate');
-    }
-  },
-  { deep: true }
-);
+const updatedSelectedDayRange = computed(() => store.getters['sales/getSelectedDayRange']);
+const updatedSelectedDate = computed(() => store.getters['skuList/getSelectedDate']);
+const updatedSelectedDate2 = computed(() => store.getters['skuList/getSelectedDate2']);
 
 watch(
-  () => store.state.sales.selectedDayRange,
-  async (selectedDayRange) => {
-    if (selectedDayRange) {
+  [updatedSelectedDate, updatedSelectedDate2, updatedSelectedDayRange],
+  async ([selectedDate, selectedDate2, updatedSelectedDayRange]) => {
+    if (selectedDate) {
+      await store.dispatch('skuList/fetchSkuList', { selectedDate, selectedDate2, pageNumber: 1 });
       await store.dispatch('skuList/fetchSkuRefundRate');
     }
   },

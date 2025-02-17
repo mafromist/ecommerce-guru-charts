@@ -1,10 +1,10 @@
 <template>
   <nav class="navbar">
     <div
-      class="navbar relative flex items-center justify-center capitalize text-base py-2 text-white border-white-200 bg-purple-700">
+      class="navbar relative flex items-center justify-center capitalize text-base py-2 text-white border-white-200 bg-purple-800">
       <router-link v-if="!isAuthenticated" class="navbar-link inline pr-5" to="/" active-class="active">Login</router-link>
 
-      <div v-else class="flex justify-between w-full px-4 pb-4">
+      <div v-else class="flex justify-between w-full px-4 py-2">
         <div>
           <p class="inline text-base flex gap-2">Welcome,
             <span class="font-bold">{{ firstName + " " + lastName }}</span>
@@ -17,7 +17,7 @@
       </div>
     </div>
     <div v-if="isAuthenticated"
-      class="navbar relative flex items-center justify-around text-base text-purple-500 py-2 border-b-2 bg-purple-200 border-gray-200 shadow-lg">
+      class="navbar relative flex justify-end text-sm gap-10 pr-4 text-gray-600 py-2 border-b-2 bg-gray-200 border-gray-200 shadow-lg">
       <p><span class="font-bold">Marketplace:</span> {{ marketplaceName }}</p>
       <p><span class="font-bold">UserId:</span> {{ userId }}</p>
       <p><span class="font-bold">StoreId:</span> {{ storeId }}</p>

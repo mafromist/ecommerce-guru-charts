@@ -14,8 +14,8 @@ export default {
         refundRateData: [],
     },
     getters: {
-        getSelectedDate: (state) => state.selectedDate || '',
-        getSelectedDate2: (state) => state.selectedDate2 || '',
+        getSelectedDate: (state) => state.selectedDate,
+        getSelectedDate2: (state) => state.selectedDate2,
     },
     mutations: {
         setSkuList(state, skuList) {
