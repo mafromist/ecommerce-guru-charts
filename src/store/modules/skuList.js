@@ -75,8 +75,8 @@ export default {
                             totalSoldUnitsOne: item.qty,
                             totalSalesTwo: item.amount2.toFixed(2),
                             totalSoldUnitsTwo: item.qty2,
-                            averageSalesOne: averageSales(item.amount, item.qty),
-                            averageSalesTwo: averageSales(item.amount2, item.qty2),
+                            averageSalesOne: averageSales(item.amount, item.qty).toFixed(2),
+                            averageSalesTwo: averageSales(item.amount2, item.qty2).toFixed(2),
                             isDatesCompared: payload.selectedDate2 ? true : false,
                         }
                     }) || []
