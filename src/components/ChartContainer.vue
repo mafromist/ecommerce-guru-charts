@@ -1,5 +1,5 @@
 <template>
-  <div class="chart-container bg-white shadow-sm p-2 rounded-lg">
+  <div class="chart-container bg-gray-10 border-purple-100 shadow-lg p-2 rounded-lg">
     <ChartHeader 
       :dayRange="selectedDayRange"
       @dayRangeChanged="changeDayRange" />

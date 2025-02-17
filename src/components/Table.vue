@@ -11,7 +11,7 @@
     </div>
 
     <div v-else>
-      <div v-if="skuList.length > 0" class="flex flex-col">
+      <div v-if="skuList.length > 0" class="flex flex-col bg-white">
         <div class="-m-1.5 overflow-x-auto">
           <div class="pt-1.5 min-w-full inline-block align-middle">
             <div class="border rounded-lg divide-y divide-gray-200">
@@ -20,52 +20,68 @@
                   <label class="sr-only">Search</label>
                   <input v-model="searchQuery" type="text"
                     id="hs-table-with-pagination-search"
-                    class="py-2 px-3 block w-full shadow-md border-purple-400 border-b-2 rounded-lg text-sm"
+                    class="py-2 px-3 block w-full shadow-md bg-gray-100 border-purple-400 border-b-2 rounded-lg text-sm"
                     placeholder="Search for items">
                 </div>
               </div>
 
-              <table
-                class="min-w-full divide-y divide-purple-300 mb-2 text-sm table-auto">
+              <table class="min-w-full divide-y divide-purple-300 mb-2 text-xs">
                 <thead class="bg-gray-100 text-center">
                   <tr>
                     <th
-                      class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                      class="p-3 text-start text-xs font-medium text-gray-500 uppercase">
                       SKU</th>
                     <th
-                      class="px-6 py-3 text-start text-xs font-medium text-gray-500 capitalize">
+                      class="p-3 text-start text-xs font-medium text-gray-500 capitalize">
                       Product Name</th>
                     <th
-                      class="px-6 py-3 text-start text-xs font-medium text-gray-500 capitalize text-right">
+                      class="p-3 text-start text-xs font-medium text-gray-500 capitalize text-right">
                       <p>First Selected Date</p>
                       <p>Sales / Units / Avg Price</p>
                     </th>
                     <th v-if="skuList[0].isDatesCompared"
-                      class="px-6 py-3 text-start text-xs font-medium text-gray-500 capitalize text-right">
+                      class="p-3 text-start text-xs font-medium text-gray-500 capitalize text-right">
                       <p>Second Selected Date</p>
                       <p>Sales / Units / Avg Price</p>
                     </th>
                     <th
-                      class="px-6 py-3 text-end text-xs font-medium text-gray-500 capitalize">
-                      Refund Rate</th>
+                      class="p-3 text-end text-xs font-medium text-gray-500 capitalize">
+                      <p>Refund Rate</p>
+                      <p>(Last {{ selectedDayRange }} Days)</p>
+                    </th>
                   </tr>
                 </thead>
                 <tbody class="text-left px-2">
-                  <tr v-for="item in paginatedSkuList" :key="item.sku"
-                    class="table-row">
-                    <td v-html="highlightText(item.sku)"></td>
-                    <td v-html="highlightText(item.productName)"></td>
-                    <td class="text-right text-green-500">{{ item.totalSalesOne
-                      }} - {{
-                        item.totalSoldUnitsOne }}
-                      - {{ item.averageSalesOne }}</td>
-                    <td v-if="item.isDatesCompared"
-                      class="text-right text-green-500">{{ item.totalSalesTwo }}
-                      - {{
-                        item.totalSoldUnitsTwo }}
-                      - {{ item.averageSalesTwo }}</td>
-                    <td class="text-center">{{ item.refundRate }}</td>
-                  </tr>
+                  <template v-if="paginatedSkuList.length > 0">
+                    <tr v-for="item in paginatedSkuList" :key="item.sku"
+                      class="px-3">
+                      <td class="p-3" v-html="highlightText(item.sku)"></td>
+                      <td class="p-3" v-html="highlightText(item.productName)">
+                      </td>
+                      <td class="p-3 text-right text-green-500 font-semibold">
+                        {{ storeCurrency + item.totalSalesOne }} / {{
+                          item.totalSoldUnitsOne }} / {{ storeCurrency +
+                          item.averageSalesOne }}
+                      </td>
+                      <td v-if="item.isDatesCompared"
+                        class="p-3 text-right text-red-500 font-semibold">
+                        {{ storeCurrency + item.totalSalesTwo }} / {{
+                          item.totalSoldUnitsTwo }} / {{ storeCurrency +
+                          item.averageSalesTwo }}
+                      </td>
+                      <td class="p-3 text-center font-semibold">{{
+                        item.refundRate }}
+                      </td>
+                    </tr>
+                  </template>
+                  <template v-else>
+                    <tr>
+                      <td colspan="5"
+                        class="p-3 text-center text-gray-500 font-semibold">
+                        No results found
+                      </td>
+                    </tr>
+                  </template>
                 </tbody>
               </table>
 
@@ -111,12 +127,16 @@ import { ref, computed, watch } from 'vue';
 import { useStore } from 'vuex';
 
 const store = useStore();
+
 const loading = computed(() => store.state.skuList.loading);
 const fetchError = computed(() => store.state.skuList.fetchError);
 const skuList = computed(() => store.state.skuList.skuList);
-const currency = computed(() => store.state.sales);
+const storeCurrency = store.getters['sales/getCurrency'];
+const selectedDayRange = store.getters['sales/getSelectedDayRange'];
 
-console.log({currency});
+// TODO: Selected Days are missing on the table
+// TODO: Selected Day Range should be dynamically changed depending on the user action on ChartHeader
+
 const currentPage = ref(1);
 const itemsPerPage = 10;
 
@@ -130,6 +150,7 @@ const filteredSkuList = computed(() => {
     );
   }
   else {
+    console.log(store.state.skuList)
     return skuList.value;
   }
 }
@@ -143,7 +164,6 @@ const paginatedSkuList = computed(() => {
 const totalPages = computed(() => Math.ceil(filteredSkuList.value.length / itemsPerPage));
 
 watch(searchQuery, () => currentPage.value = 1);
-
 
 
 const goToPage = (page) => {

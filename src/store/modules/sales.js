@@ -1,4 +1,5 @@
 import fetchData from '@/api/fetchData'
+import { get } from 'lodash'
 
 export default {
     namespaced: true,
@@ -9,7 +10,10 @@ export default {
         fetchError: null,
         currency: '',
     },
-    getters: {},
+    getters: {
+        getCurrency: (state) => state.currency,
+        getSelectedDayRange: (state) => state.selectedDayRange,
+    },
     mutations: {
         setSalesData(state, { data }) {
             if (state.selectedDayRange === undefined) {

@@ -1,15 +1,5 @@
 import fetchData from '@/api/fetchData'
 
-const formatCurrency = (value, currency = '$') => {
-    if (isNaN(value)) return ''
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(value)
-}
-
 export default {
     namespaced: true,
     state: {
@@ -23,7 +13,10 @@ export default {
         fetchError: null,
         refundRateData: [],
     },
-    getters:{},
+    getters: {
+        getSelectedDate: (state) => state.selectedDate || '',
+        getSelectedDate2: (state) => state.selectedDate2 || '',
+    },
     mutations: {
         setSkuList(state, skuList) {
             state.skuList = skuList
@@ -38,6 +31,7 @@ export default {
             state.fetchError = null
         },
         setSelectedDate(state, date) {
+            
             state.selectedDate = date
         },
         setSelectedDate2(state, date) {
@@ -74,13 +68,12 @@ export default {
 
                 const configuredData =
                     fetchedData.item?.skuList.map((item) => {
-                        console.log({ item })
                         return {
                             sku: item.sku,
                             productName: item.productName,
-                            totalSalesOne: item.amount,
+                            totalSalesOne: item.amount.toFixed(2),
                             totalSoldUnitsOne: item.qty,
-                            totalSalesTwo: item.amount2,
+                            totalSalesTwo: item.amount2.toFixed(2),
                             totalSoldUnitsTwo: item.qty2,
                             averageSalesOne: averageSales(item.amount, item.qty),
                             averageSalesTwo: averageSales(item.amount2, item.qty2),
@@ -104,14 +97,13 @@ export default {
                 }
                 const skuList = state.skuList.map((item) => item.sku)
 
-                const postData = {
+
+                const response = await fetchData.post('/data/get-sku-refund-rate', {
                     marketplace: rootState.user.store.marketplaceName,
                     sellerId: rootState.user.store.storeId,
                     skuList: skuList,
                     requestedDay: rootState.sales.selectedDayRange,
-                }
-
-                const response = await fetchData.post('/data/get-sku-refund-rate', postData)
+                })
                 const refundRateData = response.data.Data
 
                 const updatedSkuList = state.skuList.map((skuItem) => {
