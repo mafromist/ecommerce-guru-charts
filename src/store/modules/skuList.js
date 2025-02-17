@@ -1,5 +1,15 @@
 import fetchData from '@/api/fetchData'
 
+const formatCurrency = (value, currency = '$') => {
+    if (isNaN(value)) return ''
+    return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(value)
+}
+
 export default {
     namespaced: true,
     state: {
@@ -13,7 +23,7 @@ export default {
         fetchError: null,
         refundRateData: [],
     },
-    getters: {},
+    getters:{},
     mutations: {
         setSkuList(state, skuList) {
             state.skuList = skuList
@@ -64,6 +74,7 @@ export default {
 
                 const configuredData =
                     fetchedData.item?.skuList.map((item) => {
+                        console.log({ item })
                         return {
                             sku: item.sku,
                             productName: item.productName,
@@ -73,6 +84,7 @@ export default {
                             totalSoldUnitsTwo: item.qty2,
                             averageSalesOne: averageSales(item.amount, item.qty),
                             averageSalesTwo: averageSales(item.amount2, item.qty2),
+                            isDatesCompared: payload.selectedDate2 ? true : false,
                         }
                     }) || []
                 commit('setSkuList', configuredData)
